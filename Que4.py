@@ -1,7 +1,23 @@
-import requests
-from bs4 import BeautifulSoup
 import csv
 import re
+import sys
+
+# Dependency Check
+try:
+    import requests
+    from bs4 import BeautifulSoup
+except ImportError as e:
+    print(f"\nERROR: Missing dependency - {e}")
+    print("Please install required libraries: pip install requests beautifulsoup4")
+    sys.exit(1)
+
+# Ensure terminal output is UTF-8
+if hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        if hasattr(sys.stdout, 'reconfigure'):
+            sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 class BookScraper:
     def __init__(self, url):
@@ -66,12 +82,14 @@ class BookScraper:
             price_element = book_element.find('p', class_='price_color')
             price_text = price_element.get_text(strip=True) if price_element else 'N/A'
             
-            price = price_text.replace('£', '').strip()
+            # Extract only numeric part (digits and dot)
+            price_match = re.search(r'[\d.]+', price_text)
+            price_value = price_match.group(0) if price_match else '0.00'
             
             book_info = {
                 'name': title,
                 'rating': rating,
-                'price': price
+                'price': price_value
             }
             
             return book_info
@@ -137,14 +155,22 @@ class BookScraper:
                 print("-" * 90)
                 
                 for idx, book in enumerate(books_list, 1):
-                    name = book['name'].encode('ascii', 'replace').decode('ascii')
+                    name = book['name']
                     if len(name) > 52:
                         name = name[:49] + "..."
                     
-                    rating = book['rating'].encode('ascii', 'replace').decode('ascii')
-                    price = book['price'].encode('ascii', 'replace').decode('ascii')
+                    rating = book['rating']
+                    price = book['price']
                     
-                    print(f"{idx:<4} {name:<55} {rating:<10} {price:<15}")
+                    # Ensure only a single £ symbol is displayed
+                    # Handle both cases: price already has symbols or is just numeric
+                    price_match = re.search(r'[\d.]+', price)
+                    if price_match:
+                        formatted_price = f"£{price_match.group(0)}"
+                    else:
+                        formatted_price = "N/A"
+                    
+                    print(f"{idx:<4} {name:<55} {rating:<10} {formatted_price:<15}")
                 
                 print("-" * 90)
                 print(f"Total books retrieved: {len(books_list)}")
@@ -201,3 +227,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
