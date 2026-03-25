@@ -1,0 +1,23 @@
+
+======================================================================
+BOOK SCRAPER - Travel Books Category
+======================================================================
+Target URL: https://books.toscrape.com/catalogue/category/books/travel_2/index.html
+
+Starting web scraping process...
+----------------------------------------------------------------------
+Successfully fetched webpage: https://books.toscrape.com/catalogue/category/books/travel_2/index.html
+Found 11 books on page
+Successfully saved 11 books to books_travel.csv
+----------------------------------------------------------------------
+Web scraping and data storage completed successfully!
+
+==========================================================================================
+BOOKS DATA FROM CSV FILE
+==========================================================================================
+
+No.  Book Name                                               Rating     Price          
+------------------------------------------------------------------------------------------
+1    It's Only the Himalayas                                 2          ┬45.17         
+Error reading CSV: 'charmap' codec can't encode characters in position 25-26: character maps to <undefined>
+Process completed successfully!
